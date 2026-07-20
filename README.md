@@ -5,4 +5,4 @@ An Asynchronous FIFO (First-In-First-Out) is a dual-clock memory structure used 
 ![image_alt](https://github.com/AmitBastia/Asynchronous-FIFO/blob/main/Schematic_Async_FIFO.png?raw=true)
 
 # Simulation
-![image alt](https://github.com/AmitBastia/Asynchronous-FIFO/blob/main/Simulation_Async_FIFO.png?raw=true)
+![image alt](Simulation_Asynchronous_FIFO.png)
