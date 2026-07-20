@@ -1,5 +1,4 @@
 `timescale 1ns/1ps
-
 module async_fifo_tb;
 
 parameter data_width = 8;
@@ -10,7 +9,6 @@ reg rst;
 reg wr;
 reg rd;
 reg [data_width-1:0] wdata;
-
 wire [data_width-1:0] rdata;
 wire valid;
 wire empty;
@@ -34,71 +32,62 @@ async_fifo #(data_width) DUT (
     .underflow(underflow)
 );
 
-// Generated asynchronous clocks
 initial begin
     wr_clk = 0;
-    forever #5 wr_clk = ~wr_clk;   // 10ns period
+    forever #5 wr_clk = ~wr_clk;   
 end
-
 initial begin
     rd_clk = 0;
-    forever #7 rd_clk = ~rd_clk;   // 14ns period
+    forever #7 rd_clk = ~rd_clk;  
 end
 
 initial begin
     $dumpfile("async_fifo_tb.vcd");
     $dumpvars(0, async_fifo_tb);
 
-    // Checking functionality in Reset
     rst = 1;
-    wr = 0;
-    rd = 0;
+    wr  = 0;
+    rd  = 0;
     wdata = 0;
     #20;
     rst = 0;
 
-    // Checking functionality in underflow
+
     #10;
-    rd = 1;   // trying to read empty FIFO
+    rd = 1;   
     #20;
     rd = 0;
 
-    // Writing into FIFO memory
+ 
     #10;
-    repeat (5) begin
-        @(posedge wr_clk);
-        wr = 1;
-        wdata = $random;
-    end
-    @(posedge wr_clk);
-    wr = 0;
-
-    // Reading from FIFO memory
-    #20;
-    repeat (5) begin
-        @(posedge rd_clk);
-        rd = 1;
-    end
+    @(posedge wr_clk); wr = 1; wdata = 8'hA1;
+    @(posedge wr_clk); wdata = 8'hB2;
+    @(posedge wr_clk); wdata = 8'hC3;
+    @(posedge wr_clk); wdata = 8'hD4;
+    @(posedge wr_clk); wdata = 8'hE5;
+    @(posedge wr_clk); wdata = 8'hF6;
+    @(posedge wr_clk); wdata = 8'h07;
+    @(posedge wr_clk); wdata = 8'h18;
+    @(posedge wr_clk); wr = 0;
+    
+    #10;
+    @(posedge wr_clk); wr = 1; wdata = 8'hFF;   
+    @(posedge wr_clk); wr = 0;
+ 
+    #40;
+    @(posedge rd_clk); rd = 1;
     @(posedge rd_clk);
-    rd = 0;
-
-    // Checking functionality in Overflow condition
-    #20;
-    repeat (12) begin   // write more than depth (8)
-        @(posedge wr_clk);
-        wr = 1;
-        wdata = $random;
-    end
-    @(posedge wr_clk);
-    wr = 0;
-
-    // Checking functionality in Reset during operation
+    @(posedge rd_clk);
+    @(posedge rd_clk);
+    @(posedge rd_clk);
+    @(posedge rd_clk);
+    @(posedge rd_clk);
+    @(posedge rd_clk);
+    @(posedge rd_clk); rd = 0;   
     #30;
     rst = 1;
     #20;
     rst = 0;
-
-    // Finish
     #100;
     $finish;
 end
